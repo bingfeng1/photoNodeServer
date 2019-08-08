@@ -4,7 +4,7 @@
   "description": "图片管理后台服务",
   "main": "index.js",
   "dependencies": {
-    "kcors": "^2.2.2",
+    "@koa/cors": "^2.2.3",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-handle-error": "0.0.5",
@@ -14,10 +14,12 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
-    "eslint": "^6.1.0"
+    "eslint": "^6.1.0",
+    "nodemon": "^1.19.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -29,5 +31,8 @@
   "bugs": {
     "url": "https://github.com/bingfeng1/photoNodeServer/issues"
   },
-  "homepage": "https://github.com/bingfeng1/photoNodeServer#readme"
+  "homepage": "https://github.com/bingfeng1/photoNodeServer#readme",
+  "nodemonConfig": {
+    "delay": "1000"
+  }
 }
