@@ -2,6 +2,7 @@
 const Router = require('koa2-router');
 const router = new Router();
 const fs = require('fs')
+const path = require('path')
 const {
     INSERT,
     SELECT,
@@ -10,7 +11,7 @@ const {
 
 // 走马灯图片路由
 router.get('/carousel', async ctx => {
-    let filePath = 'F:/learn/photoItem/photovue/src/assets/image';
+    let filePath = path.resolve(__dirname,'../../photoVue/src/assets/image')
     let fileList = await getImgPath(filePath)
 
     ctx.body = fileList

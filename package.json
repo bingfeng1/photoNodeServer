@@ -1,5 +1,5 @@
 {
-  "name": "photoNodeServer",
+  "name": "photonodeserver",
   "version": "1.0.0",
   "description": "图片管理后台服务",
   "main": "index.js",
@@ -10,7 +10,8 @@
     "koa-handle-error": "0.0.5",
     "koa-logger": "^3.2.1",
     "koa2-router": "^1.1.2",
-    "mysql": "^2.17.1"
+    "mysql": "^2.17.1",
+    "nanoid": "^2.0.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
