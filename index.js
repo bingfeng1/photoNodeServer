@@ -13,7 +13,7 @@ const onError = err => {
 
 app.use(logger())
     .use(handleError(onError))
-    .use(bodyParser())
+    .use(bodyParser({multipart: true}))
     .use(cors())
     .use(route)
 

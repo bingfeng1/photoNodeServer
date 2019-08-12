@@ -12,13 +12,14 @@ const upload = multer();
 router.post('/login', async ctx => {
     let { account, pass } = ctx.request.body;
     // 这里拼接sql语句
-    let sql = mysql.format('SELECT imageBase64,imgtype FROM `users` where ? and ?', [{ account }, { pass }])
+    let sql = mysql.format('SELECT nickname,imageBase64,imageType FROM `users` where ? and ?', [{ account }, { pass }])
     let result = await dealSql(sql)
         .then(
             ({ results }) => {
                 return {
                     imageBase64: results[0].imageBase64.toString('base64'),
-                    imgtype: results[0].imgtype
+                    imageType: results[0].imageType,
+                    nickname: results[0].nickname
                 }
             }
         )
@@ -29,19 +30,13 @@ router.post('/login', async ctx => {
         )
     ctx.body = result;
 })
-
-    // 获取上传资料
-    .post('/headImg', upload.single('file'), async ctx => {
-        ctx.body = ctx.req.file
-    })
-
     // 注册信息入库
-    .post('/signup', async ctx => {
-        let { account, nickname, pass, birthday, hobbies, imageBase64, sex, imgtype } = ctx.request.body;
+    .post('/signup',upload.single('imageBase64'), async ctx => {
+        let { account, nickname, pass, birthday, hobbies, sex, imageType } = ctx.req.body;
+        let imageBase64 = ctx.req.file.buffer;
         hobbies = hobbies.toString()
-        imageBase64 = Buffer.from(imageBase64);
         // 这里拼接sql语句
-        let sql = mysql.format('INSERT INTO `users` SET ?', [{ account, nickname, pass, birthday, hobbies, imageBase64, sex, imgtype }])
+        let sql = mysql.format('INSERT INTO `users` SET ?', [{ account, nickname, pass, birthday, hobbies, imageBase64, sex, imageType }])
         let result = await dealSql(sql)
             .then(
                 ({ results }) => {

@@ -3,7 +3,7 @@ const mysql = require('mysql');
 const pool = mysql.createPool({
     // 这里请使用自己的数据库地址，此地址为本地虚拟机默认设置
     connectionLimit: 10,
-    host: '192.168.139.131',
+    host: '192.168.119.128',
     user: 'root',
     password: 'root',
     database: "test"
