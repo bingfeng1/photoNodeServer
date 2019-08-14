@@ -6,6 +6,17 @@ const dealSql = require('../mysql/sqlData') //封装的promise数据库方法
 const mysql = require('mysql')  //使用mysql.format 进行sql拼接
 // 生成随机码
 const nanoid = require('nanoid')
+const multer = require('koa-multer')
+const path = require('path')
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.resolve(__dirname,'..','uploads'))
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+const upload = multer({ storage });
 
 // 走马灯图片路由
 router.get('/imgType', async ctx => {
@@ -56,6 +67,11 @@ router.get('/imgType', async ctx => {
         let treeList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = treeList
+    })
+
+    // 用户上传图片
+    .post('/upload', upload.array('file', 10), async ctx => {
+        ctx.body = "success"
     })
 
 module.exports = router;
