@@ -31,9 +31,9 @@ router.get('/imgType', async ctx => {
     })
     .delete('/deleteImgType', async ctx => {
         let {account} = ctx.request.body;
-        let {orderId} = ctx.query;
+        let orderId = ctx.query['orderId[]'];
         // 这里拼接sql语句
-        let sql = mysql.format('DELETE FROM `userImgType` WHERE account = ? and orderId = ? ', [account,orderId])
+        let sql = mysql.format('DELETE FROM `userImgType` WHERE account = ? and orderId IN (?) ', [account,orderId])
         await dealSql(sql).then((
             { results }) => results)
 
@@ -41,6 +41,15 @@ router.get('/imgType', async ctx => {
         let treeList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = treeList
+    })
+    .put('/updateImgType', async ctx => {
+        let {account} = ctx.request.body;
+        let {orderId,typename} = ctx.query;
+        // 这里拼接sql语句
+        let sql = mysql.format('UPDATE `userImgType` SET ? WHERE account = ? and orderId = ? ', [{typename},account,orderId])
+        let result = await dealSql(sql).then((
+            { results }) => results)
+        ctx.body = result
     })
 
 module.exports = router;
