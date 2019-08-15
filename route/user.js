@@ -45,9 +45,9 @@ router.get('/imgType', async ctx => {
     })
     .delete('/deleteImgType', async ctx => {
         let { account } = ctx.request.body;
-        let id = ctx.query['id[]'];
+        let id = ctx.query;
         // 这里拼接sql语句
-        let sql = mysql.format('DELETE FROM `userImgType` WHERE id IN (?) ', [id])
+        let sql = mysql.format('DELETE FROM `userImgType` WHERE ? ', [id])
         await dealSql(sql).then((
             { results }) => results)
 
