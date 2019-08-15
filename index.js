@@ -11,10 +11,16 @@ const onError = err => {
     console.error(err)
 }
 
+const basePath = __dirname;
+
 app.use(logger())
     .use(handleError(onError))
     .use(bodyParser({multipart: true}))
     .use(cors())
+    .use(async (ctx,next)=>{
+        ctx.basePath = basePath;
+        await next();
+    })
     .use(route)
 
     .listen(3000, '0.0.0.0', () => {

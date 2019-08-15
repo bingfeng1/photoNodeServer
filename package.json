@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@koa/cors": "^2.2.3",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-handle-error": "0.0.5",
