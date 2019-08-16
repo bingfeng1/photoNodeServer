@@ -11,8 +11,21 @@ CREATE TABLE `users` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='用户信息表';
 
 CREATE TABLE `userImgType` (
+  `id` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '列表的单独主键',
   `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '用户账户',
   `typename` VARCHAR(20) COLLATE utf8_estonian_ci NOT NULL COMMENT '分类名称',
   `orderId` INT(10) DEFAULT NULL COMMENT '分类排序',
-  PRIMARY KEY (`account`,`typename`)
+  PRIMARY KEY (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='用户自定义图片分组';
+
+
+CREATE TABLE `imagelist` (
+  `id` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '图片的唯一id',
+  `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '上传人',
+  `name` VARCHAR(20) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片名称',
+  `path` VARCHAR(200) COLLATE utf8_estonian_ci NOT NULL COMMENT '图片存放路径',
+  `createtime` DATETIME NOT NULL COMMENT '存放时间',
+  `size` VARCHAR(50) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片大小',
+  `type` VARCHAR(50) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片格式',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='所有图片存放的路径';

@@ -26,6 +26,7 @@ const addToken = (data, option = {}) => {
  */
 const checkToken = (token, option = {}) => {
     return new Promise((resolve, reject) => {
+        token = token.split(' ')[1];
         jwt.verify(token, secret, option, (err, decoded) => {
             if (err) {
                 reject(err)
