@@ -24,6 +24,7 @@ CREATE TABLE `imagelist` (
   `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '上传人',
   `path` VARCHAR(200) COLLATE utf8_estonian_ci NOT NULL COMMENT '存放图片的完整路径',
   `originalname` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '上传时的图片信息',
+  `relativepath` VARCHAR(200) COLLATE utf8_estonian_ci NOT NULL COMMENT '相对根路径的路径',
   `destination` VARCHAR(200) COLLATE utf8_estonian_ci NOT NULL COMMENT '存放图片的根路径',
   `filename` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '系统生成的图片名称',
   `createtime` DATETIME NOT NULL COMMENT '存放时间',
@@ -32,3 +33,4 @@ CREATE TABLE `imagelist` (
   `mimetype` VARCHAR(50) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片格式',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='所有图片存放的路径'
+

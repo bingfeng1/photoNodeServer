@@ -88,13 +88,15 @@ router
     .post('/upload', upload.array('file', 9), async ctx => {
         // 循环获取图片信息（已保存完毕）
         let { account } = ctx.token;
-        let sql = mysql.format('INSERT INTO `imagelist` (id,account,path,originalname,destination,filename,createtime,size,ext,mimetype) VALUES ')
+        let sql = mysql.format('INSERT INTO `imagelist` (id,account,path,originalname,destination,relativepath,filename,createtime,size,ext,mimetype) VALUES ')
         let temparr = [];
+        let _path = path;
         for (let v of ctx.req.files) {
             let {destination,filename,mimetype,originalname,path,size} = v;
             let [id,ext] = filename.split('.')
             let createtime = dateTime()
-            temparr.push(mysql.format('(?,?,?,?,?,?,?,?,?,?)',[id,account,path,originalname,destination,filename,createtime,size,ext,mimetype]))
+            let relativepath = _path.relative(ctx.basePath,path)
+            temparr.push(mysql.format('(?,?,?,?,?,?,?,?,?,?,?)',[id,account,path,originalname,destination,relativepath,filename,createtime,size,ext,mimetype]))
         }
         sql+=temparr.join(',')
         await dealSql(sql).then((

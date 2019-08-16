@@ -6,6 +6,8 @@ const cors = require('@koa/cors')
 const app = new Koa();
 
 const route = require('./route/allRouter')
+const serve = require('koa-static');
+app.use(serve(__dirname + '/uploads'));
 
 const onError = err => {
     console.error(err)
