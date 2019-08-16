@@ -11,21 +11,24 @@ const multer = require('koa-multer')
 const path = require('path')
 // 生成日期
 const dateTime = require('date-time');
+// 上次文件的配置
 let storage = multer.diskStorage({
     destination:
         path.resolve(__dirname, '..', 'uploads')
     ,
     filename: function (req, file, cb) {
         let [name, ext] = file.originalname.split('.')
+        // 通过uuid生成几乎唯一的名字（应该可以增加年月日）
         name = nanoid()
         cb(null, [name, ext].join('.'))
     }
 })
 const upload = multer({ storage });
-
+// 解析token的方法
 const { checkToken } = require('../token/token')
-// 走马灯图片路由
+
 router
+    // 路由中间件，所有和用户相关的都要经过token解密
     .use(async (ctx, next) => {
         let param = ctx.request.header.authorization;
 
@@ -33,7 +36,9 @@ router
         ctx.token = await checkToken(param).then(data => data)
 
         await next();
-    }).get('/imgType', async ctx => {
+    })
+    // 获取图片类型（tree）
+    .get('/imgType', async ctx => {
         // 这里拼接sql语句
         let { account } = ctx.token;
         let sql = mysql.format('SELECT * FROM `userImgType` WHERE ? ORDER BY orderId', [{ account }])
@@ -58,6 +63,7 @@ router
             { results }) => results)
         ctx.body = treeList
     })
+    // 删除图片信息
     .delete('/deleteImgType', async ctx => {
         let { account } = ctx.token;
         let id = ctx.query;
@@ -71,6 +77,7 @@ router
             { results }) => results)
         ctx.body = treeList
     })
+    // 修改图片信息
     .put('/updateImgType', async ctx => {
         let { account } = ctx.token;
         let { id, typename } = ctx.request.body;
@@ -92,16 +99,26 @@ router
         let temparr = [];
         let _path = path;
         for (let v of ctx.req.files) {
-            let {destination,filename,mimetype,originalname,path,size} = v;
-            let [id,ext] = filename.split('.')
+            let { destination, filename, mimetype, originalname, path, size } = v;
+            let [id, ext] = filename.split('.')
             let createtime = dateTime()
-            let relativepath = _path.relative(ctx.basePath,path)
-            temparr.push(mysql.format('(?,?,?,?,?,?,?,?,?,?,?)',[id,account,path,originalname,destination,relativepath,filename,createtime,size,ext,mimetype]))
+            let relativepath = _path.relative(ctx.basePath, path)
+            temparr.push(mysql.format('(?,?,?,?,?,?,?,?,?,?,?)', [id, account, path, originalname, destination, relativepath, filename, createtime, size, ext, mimetype]))
         }
-        sql+=temparr.join(',')
+        sql += temparr.join(',')
         await dealSql(sql).then((
             { results }) => results)
         ctx.body = "success"
+    })
+
+    // 获取当前用户已上传的图片
+    .get('/selfImg', async ctx => {
+        let { account } = ctx.token;
+        let sql = mysql.format('SELECT filename FROM `imagelist` WHERE ? ', [{ account }])
+        let result = await dealSql(sql).then(
+            ({ results }) => results
+        )
+        ctx.body = result
     })
 
 module.exports = router;

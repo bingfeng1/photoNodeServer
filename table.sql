@@ -32,5 +32,12 @@ CREATE TABLE `imagelist` (
   `ext` VARCHAR(20) COLLATE utf8_estonian_ci NOT NULL COMMENT '后缀名',
   `mimetype` VARCHAR(50) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片格式',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='所有图片存放的路径'
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='所有图片存放的路径';
 
+drop table users;
+drop table userImgType;
+drop table imagelist;
+DELETE  FROM `imagelist`
+SELECT * FROM `imagelist`
+
+SELECT filename FROM `imagelist` WHERE `account` = '1'
