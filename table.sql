@@ -22,10 +22,13 @@ CREATE TABLE `userImgType` (
 CREATE TABLE `imagelist` (
   `id` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '图片的唯一id',
   `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '上传人',
-  `name` VARCHAR(20) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片名称',
-  `path` VARCHAR(200) COLLATE utf8_estonian_ci NOT NULL COMMENT '图片存放路径',
+  `path` VARCHAR(200) COLLATE utf8_estonian_ci NOT NULL COMMENT '存放图片的完整路径',
+  `originalname` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '上传时的图片信息',
+  `destination` VARCHAR(200) COLLATE utf8_estonian_ci NOT NULL COMMENT '存放图片的根路径',
+  `filename` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '系统生成的图片名称',
   `createtime` DATETIME NOT NULL COMMENT '存放时间',
   `size` VARCHAR(50) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片大小',
-  `type` VARCHAR(50) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片格式',
+  `ext` VARCHAR(20) COLLATE utf8_estonian_ci NOT NULL COMMENT '后缀名',
+  `mimetype` VARCHAR(50) COLLATE utf8_estonian_ci DEFAULT NULL COMMENT '图片格式',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='所有图片存放的路径';
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='所有图片存放的路径'
