@@ -27,6 +27,9 @@ const upload = multer({ storage });
 // 解析token的方法
 const { checkToken } = require('../token/token')
 
+// 删除文件
+const { deleteImg } = require('../dealFile/file')
+
 router
     // 路由中间件，所有和用户相关的都要经过token解密
     .use(async (ctx, next) => {
@@ -114,11 +117,29 @@ router
     // 获取当前用户已上传的图片
     .get('/selfImg', async ctx => {
         let { account } = ctx.token;
-        let sql = mysql.format('SELECT filename FROM `imagelist` WHERE ? ', [{ account }])
+        let sql = mysql.format('SELECT id,filename,originalname FROM `imagelist` WHERE ? ', [{ account }])
         let result = await dealSql(sql).then(
             ({ results }) => results
         )
         ctx.body = result
+    })
+    // 删除用户上传的图片
+    .delete('/deleteImg', async ctx => {
+        let { account } = ctx.token;
+        let { id, filename } = ctx.query;
+        let sql = mysql.format('DELETE FROM `imagelist` WHERE ? AND ? ', [{ account }, { id }])
+        let result = await dealSql(sql).then(
+            ({ results }) => results
+        )
+        let data;
+        if (result.affectedRows == 1) {
+            data = "success";
+            // 进行文件删除操作
+            deleteImg(filename)
+        } else {
+            data = "error"
+        }
+        ctx.body = data;
     })
 
 module.exports = router;
