@@ -141,5 +141,16 @@ router
         }
         ctx.body = data;
     })
+    // 修改图片名字
+    .put('/updateImgName', async ctx => {
+        let { account } = ctx.token;
+        let { originalname, id } = ctx.request.body;
+        // 这里拼接sql语句
+        let sql = mysql.format('UPDATE `imagelist` SET ? WHERE account = ? and id = ? ', [{ originalname }, account, id])
+        let result = await dealSql(sql).then((
+            { results }) => results)
+
+        ctx.body = result
+    })
 
 module.exports = router;
