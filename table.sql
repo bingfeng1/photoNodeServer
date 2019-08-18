@@ -34,10 +34,25 @@ CREATE TABLE `imagelist` (
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='所有图片存放的路径';
 
+CREATE TABLE `imgforuser` (
+  `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '上传人',
+  `picid` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '图片ID',
+  `usertypeid` VARCHAR(20) COLLATE utf8_estonian_ci COMMENT '列表的单独主键',
+  PRIMARY KEY (`account`,`picid`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='用户的图片分组';
+
 drop table users;
 drop table userImgType;
 drop table imagelist;
+drop table imgforuser;
 DELETE  FROM `imagelist`
 SELECT * FROM `imagelist`
 
+DELETE  FROM `imgforuser`
+SELECT * FROM `imgforuser`
+
 SELECT filename FROM `imagelist` WHERE `account` = '1'
+
+INSERT INTO `imgforuser` (account,picid,usertypeid) VALUES ('1','CIxW2RrLWS3TSF0mT9uug',''),('1','T0HPxDJGVXlp9TqwFQqgY','')
+
+SELECT * from `imgforuser` a left join `imagelist` b on a.picid = b.id
