@@ -124,7 +124,14 @@ router
     // 获取当前用户已上传的图片
     .get('/selfImg', async ctx => {
         let { account } = ctx.token;
-        let sql = mysql.format('SELECT id,filename,originalname FROM `imagelist` WHERE ? ', [{ account }])
+        let params = ctx.query;
+        let id = params['checkedKeys[]']
+        // flag用来判断是否是第一次进入，如果是第一次进入，那么直接显示所有
+        let flag = params.flag;
+        let sql = mysql.format('SELECT c.id,c.filename,c.originalname FROM `userImgType` a LEFT JOIN `imgforuser` b on a.id = b.usertypeid LEFT JOIN `imagelist` c on b.picid = c.id WHERE a.account = ? ', [account])
+        if (id || !flag) {
+            sql += mysql.format('AND a.id in (?)', [id])
+        }
         let result = await dealSql(sql).then(
             ({ results }) => results
         )

@@ -37,7 +37,7 @@ CREATE TABLE `imagelist` (
 CREATE TABLE `imgforuser` (
   `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '上传人',
   `picid` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '图片ID',
-  `usertypeid` VARCHAR(20) COLLATE utf8_estonian_ci COMMENT '列表的单独主键',
+  `usertypeid` VARCHAR(50) COLLATE utf8_estonian_ci COMMENT '列表的单独主键',
   PRIMARY KEY (`account`,`picid`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='用户的图片分组';
 
@@ -53,6 +53,8 @@ SELECT * FROM `imgforuser`
 
 SELECT filename FROM `imagelist` WHERE `account` = '1'
 
-INSERT INTO `imgforuser` (account,picid,usertypeid) VALUES ('1','CIxW2RrLWS3TSF0mT9uug',''),('1','T0HPxDJGVXlp9TqwFQqgY','')
+SELECT il.id,il.filename,il.originalname FROM `imgforuser` iu LEFT JOIN `userImgType` ui on iu.usertypeid = ui.id LEFT JOIN `imagelist` il on iu.picid = il.id WHERE iu.account = '1' AND iu.usertypeid in ('dFu0XUYiIL-wmCNlTbZbp', 'v1iEg10MvGUWw8hmKdxuX')
 
-SELECT * from `imgforuser` a left join `imagelist` b on a.picid = b.id
+SELECT c.id,c.filename,c.originalname FROM `userImgType` a LEFT JOIN `imgforuser` b on a.id = b.usertypeid LEFT JOIN `imagelist` c on b.picid = c.id
+
+SELECT c.id,c.filename,c.originalname FROM `userImgType` a LEFT JOIN `imgforuser` b on a.id = b.usertypeid LEFT JOIN `imagelist` c on b.picid = c.id WHERE a.account = '1' AND a.id in ('dFu0XUYiIL-wmCNlTbZbp')
