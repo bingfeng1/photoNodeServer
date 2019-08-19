@@ -22,14 +22,13 @@ router.get('/carousel', async ctx => {
             { results }) => results)
         ctx.body = imgList
     })
+    // 下载时使用
     .get("/downloads",async ctx=>{
         let {filename} = ctx.query;
-        ctx.response
         await send(ctx,filename,{
             root: path.resolve(__dirname,'..','uploads'),
             setHeaders(res){
                 res.setHeader("Content-disposition","attachment")
-                // res.setHeader("Content-Type","application/x-msdownload")
             }
         })
     })
