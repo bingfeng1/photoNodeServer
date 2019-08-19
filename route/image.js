@@ -6,6 +6,8 @@ const path = require('path')
 const dealSql = require('../mysql/sqlData') //封装的promise数据库方法
 const mysql = require('mysql')  //使用mysql.format 进行sql拼接
 
+const send = require('koa-send')
+
 // 走马灯图片路由
 router.get('/carousel', async ctx => {
     let filePath = path.resolve(__dirname, '../../photoVue/src/assets/image')
@@ -19,6 +21,17 @@ router.get('/carousel', async ctx => {
         let imgList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = imgList
+    })
+    .get("/downloads",async ctx=>{
+        let {filename} = ctx.query;
+        ctx.response
+        await send(ctx,filename,{
+            root: path.resolve(__dirname,'..','uploads'),
+            setHeaders(res){
+                res.setHeader("Content-disposition","attachment")
+                // res.setHeader("Content-Type","application/x-msdownload")
+            }
+        })
     })
 
 module.exports = router;
