@@ -17,7 +17,7 @@ router.get('/carousel', async ctx => {
 })
     .get('/allImage', async ctx => {
         // 这里拼接sql语句
-        let sql = mysql.format('SELECT filename FROM `imagelist`')
+        let sql = mysql.format('SELECT c.* FROM `userImgType` a LEFT JOIN `imgforuser` b ON a.id = b.usertypeid LEFT JOIN `imagelist` c ON b.picid = c.id WHERE (a.islock IS NULL OR a.islock = FALSE) AND c.id IS NOT NULL')
         let imgList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = imgList

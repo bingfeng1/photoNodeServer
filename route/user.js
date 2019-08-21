@@ -153,7 +153,7 @@ router
         let params = ctx.query;
         let id = params['checkedKeys[]']
         // flag用来判断是否是第一次进入，如果是第一次进入，那么直接显示所有
-        let sql = mysql.format('SELECT c.id,c.filename,c.originalname FROM `userImgType` a LEFT JOIN `imgforuser` b on a.id = b.usertypeid LEFT JOIN `imagelist` c on b.picid = c.id WHERE a.account = ? AND c.id IS NOT NULL', [account])
+        let sql = mysql.format('SELECT c.id,c.filename,c.originalname,c.ext FROM `userImgType` a LEFT JOIN `imgforuser` b on a.id = b.usertypeid LEFT JOIN `imagelist` c on b.picid = c.id WHERE a.account = ? AND c.id IS NOT NULL', [account])
         if (id) {
             sql += mysql.format(' AND a.id in (?)', [id])
         }
