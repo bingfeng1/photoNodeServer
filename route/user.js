@@ -30,6 +30,9 @@ const { checkToken } = require('../token/token')
 // 删除文件
 const { deleteImg } = require('../dealFile/file')
 
+// 查询图片类型
+const SELECT_IMAGE_TYPE = 'SELECT * FROM `userImgType` WHERE ? ORDER BY `orderId`';
+
 router
     // 路由中间件，所有和用户相关的都要经过token解密
     .use(async (ctx, next) => {
@@ -40,17 +43,17 @@ router
 
         await next();
     })
-    // 获取图片类型（tree）
+    // 获取相册（tree）
     .get('/imgType', async ctx => {
         // 这里拼接sql语句
         let { account } = ctx.token;
-        let sql = mysql.format('SELECT * FROM `userImgType` WHERE ? ORDER BY orderId', [{ account }])
+        let sql = mysql.format(SELECT_IMAGE_TYPE, [{ account }])
         let treeList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = treeList
 
     })
-    // 增加数据，并返回
+    // 增加相册
     .post('/addImgType', async ctx => {
         let params = ctx.request.body;
         let { account } = ctx.token;
@@ -61,36 +64,35 @@ router
         await dealSql(sql).then((
             { results }) => results)
 
-        sql = mysql.format('SELECT * FROM `userImgType` WHERE ? ORDER BY orderId', [{ account }])
+        sql = mysql.format(SELECT_IMAGE_TYPE, [{ account }])
         let treeList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = treeList
     })
-    // 删除图片信息
+    // 删除相册
     .delete('/deleteImgType', async ctx => {
         let { account } = ctx.token;
         let id = ctx.query;
         // 这里拼接sql语句
         // 首先需要查询一下，该种类中是否有图片，如果有，那么删除失败
-        let sql = mysql.format('SELECT COUNT(*) AS num FROM imgforuser a LEFT JOIN imagelist b ON a.picid = b.id WHERE a.account = ? and a.usertypeid = ?',[account,id.id])
+        let sql = mysql.format('SELECT COUNT(*) AS num FROM imgforuser a LEFT JOIN imagelist b ON a.picid = b.id WHERE a.account = ? and a.usertypeid = ?', [account, id.id])
         let num = await dealSql(sql).then((
             { results }) => results[0].num)
-
-        if(num>0){
+        if (num > 0) {
             ctx.body = "未清空"
-        }else{
+        } else {
             sql = mysql.format('DELETE FROM `userImgType` WHERE ? ', [id])
             await dealSql(sql).then((
                 { results }) => results)
-    
-            sql = mysql.format('SELECT * FROM `userImgType` WHERE ? ORDER BY orderId', [{ account }])
+
+            sql = mysql.format(SELECT_IMAGE_TYPE, [{ account }])
             let treeList = await dealSql(sql).then((
                 { results }) => results)
             ctx.body = treeList
         }
 
     })
-    // 修改图片信息
+    // 修改相册
     .put('/updateImgType', async ctx => {
         let { account } = ctx.token;
         let { id, typename } = ctx.request.body;
@@ -98,10 +100,24 @@ router
         let sql = mysql.format('UPDATE `userImgType` SET ? WHERE id = ? ', [{ typename }, id])
         await dealSql(sql).then((
             { results }) => results)
-        sql = mysql.format('SELECT * FROM `userImgType` WHERE ? ORDER BY orderId', [{ account }])
+        sql = mysql.format(SELECT_IMAGE_TYPE, [{ account }])
         let treeList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = treeList
+    })
+    // 是否变为私有相册
+    .put('/islock', async ctx => {
+        let { account } = ctx.token;
+        let { id, islock } = ctx.request.body;
+        // 这里拼接sql语句
+        let sql = mysql.format('UPDATE `userImgType` SET ? WHERE ? and ? ', [{ islock }, { id }, { account }])
+        let result = await dealSql(sql).then((
+            { results }) => results)
+        if (result.affectedRows == 1) {
+            ctx.body = 'success'
+        } else {
+            ctx.body = 'error'
+        }
     })
 
     // 用户上传图片
@@ -154,6 +170,12 @@ router
         let result = await dealSql(sql).then(
             ({ results }) => results
         )
+
+        sql = mysql.format('DELETE FROM `imgforuser` WHERE ? AND ? ', [{ account }, { picid: id }])
+        result = await dealSql(sql).then(
+            ({ results }) => results
+        )
+
         let data;
         if (result.affectedRows == 1) {
             data = "success";

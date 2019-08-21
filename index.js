@@ -7,7 +7,6 @@ const app = new Koa();
 
 const route = require('./route/allRouter')
 const serve = require('koa-static');
-app.use(serve(__dirname + '/uploads'));
 
 const onError = err => {
     console.error(err)
@@ -19,6 +18,7 @@ app.use(logger())
     .use(handleError(onError))
     .use(bodyParser({multipart: true}))
     .use(cors())
+    .use(serve(__dirname + '/uploads'))
     .use(async (ctx,next)=>{
         ctx.basePath = basePath;
         await next();

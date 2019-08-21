@@ -26,10 +26,7 @@ router.get('/carousel', async ctx => {
     .get("/downloads",async ctx=>{
         let {filename} = ctx.query;
         await send(ctx,filename,{
-            root: path.resolve(__dirname,'..','uploads'),
-            setHeaders(res){
-                res.setHeader("Content-disposition","attachment")
-            }
+            root: path.resolve(__dirname,'..','uploads')
         })
     })
 

@@ -15,6 +15,7 @@ CREATE TABLE `userImgType` (
   `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '用户账户',
   `typename` VARCHAR(20) COLLATE utf8_estonian_ci NOT NULL COMMENT '分类名称',
   `orderId` INT(10) DEFAULT NULL COMMENT '分类排序',
+  `islock` TINYINT(1) DEFAULT '0' COMMENT '是否是私有相册',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='用户自定义图片分组';
 
@@ -41,20 +42,21 @@ CREATE TABLE `imgforuser` (
   PRIMARY KEY (`account`,`picid`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='用户的图片分组';
 
-drop table users;
-drop table userImgType;
-drop table imagelist;
-drop table imgforuser;
+CREATE TABLE `privateCollection` (
+  `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '账号',
+  `picid` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '图片id',
+  PRIMARY KEY (`account`,`picid`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci COMMENT='个人收藏';
+
+DROP TABLE users;
+DROP TABLE userImgType;
+DROP TABLE imagelist;
+DROP TABLE imgforuser;
 DELETE  FROM `imagelist`
 SELECT * FROM `imagelist`
 
 DELETE  FROM `imgforuser`
 SELECT * FROM `imgforuser`
 
-SELECT filename FROM `imagelist` WHERE `account` = '1'
 
-SELECT il.id,il.filename,il.originalname FROM `imgforuser` iu LEFT JOIN `userImgType` ui on iu.usertypeid = ui.id LEFT JOIN `imagelist` il on iu.picid = il.id WHERE iu.account = '1' AND iu.usertypeid in ('dFu0XUYiIL-wmCNlTbZbp', 'v1iEg10MvGUWw8hmKdxuX')
-
-SELECT c.id,c.filename,c.originalname FROM `userImgType` a LEFT JOIN `imgforuser` b on a.id = b.usertypeid LEFT JOIN `imagelist` c on b.picid = c.id
-
-SELECT c.id,c.filename,c.originalname FROM `userImgType` a LEFT JOIN `imgforuser` b on a.id = b.usertypeid LEFT JOIN `imagelist` c on b.picid = c.id WHERE a.account = '1' AND a.id in ('dFu0XUYiIL-wmCNlTbZbp')
+SELECT a.*,IF(b.userImgTypeId IS NULL , FALSE , TRUE) AS islock FROM `userImgType` a LEFT JOIN privateUserImgType b ON a.account = b.account AND a.id = b.userImgTypeId WHERE a.account='1' ORDER BY orderId
