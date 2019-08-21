@@ -71,14 +71,24 @@ router
         let { account } = ctx.token;
         let id = ctx.query;
         // 这里拼接sql语句
-        let sql = mysql.format('DELETE FROM `userImgType` WHERE ? ', [id])
-        await dealSql(sql).then((
-            { results }) => results)
+        // 首先需要查询一下，该种类中是否有图片，如果有，那么删除失败
+        let sql = mysql.format('SELECT COUNT(*) AS num FROM imgforuser a LEFT JOIN imagelist b ON a.picid = b.id WHERE a.account = ? and a.usertypeid = ?',[account,id.id])
+        let num = await dealSql(sql).then((
+            { results }) => results[0].num)
 
-        sql = mysql.format('SELECT * FROM `userImgType` WHERE ? ORDER BY orderId', [{ account }])
-        let treeList = await dealSql(sql).then((
-            { results }) => results)
-        ctx.body = treeList
+        if(num>0){
+            ctx.body = "未清空"
+        }else{
+            sql = mysql.format('DELETE FROM `userImgType` WHERE ? ', [id])
+            await dealSql(sql).then((
+                { results }) => results)
+    
+            sql = mysql.format('SELECT * FROM `userImgType` WHERE ? ORDER BY orderId', [{ account }])
+            let treeList = await dealSql(sql).then((
+                { results }) => results)
+            ctx.body = treeList
+        }
+
     })
     // 修改图片信息
     .put('/updateImgType', async ctx => {
@@ -127,9 +137,8 @@ router
         let params = ctx.query;
         let id = params['checkedKeys[]']
         // flag用来判断是否是第一次进入，如果是第一次进入，那么直接显示所有
-        let flag = params.flag;
         let sql = mysql.format('SELECT c.id,c.filename,c.originalname FROM `userImgType` a LEFT JOIN `imgforuser` b on a.id = b.usertypeid LEFT JOIN `imagelist` c on b.picid = c.id WHERE a.account = ? AND c.id IS NOT NULL', [account])
-        if (id || !flag) {
+        if (id) {
             sql += mysql.format(' AND a.id in (?)', [id])
         }
         let result = await dealSql(sql).then(
