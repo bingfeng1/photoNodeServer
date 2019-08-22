@@ -62,8 +62,7 @@ SELECT
 FROM
   `imgforuser` ;
 
-      
-      
+-- 首页可公开的图片展示
 SELECT 
   c.*,
   IF(d.picid IS NULL, FALSE, TRUE) AS collected 
@@ -82,4 +81,6 @@ FROM
     ON c.id = d.`picid` 
 WHERE (a.islock IS NULL 
     OR a.islock = FALSE) 
-  AND c.id IS NOT NULL 
+  AND c.id IS NOT NULL ;
+  -- 所有收藏
+  SELECT b.* FROM `privateCollection` a  LEFT JOIN `imagelist` b on a.picid = b.id

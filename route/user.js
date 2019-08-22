@@ -224,5 +224,15 @@ router
 
         ctx.body = result
     })
+    // 获取用户收藏的图片
+    // 获取获取所有可查看的图片
+    .get('/collect', async ctx => {
+        let { account } = ctx.token;
+        // 这里拼接sql语句
+        let sql = mysql.format('SELECT b.* FROM `privateCollection` a  LEFT JOIN `imagelist` b ON a.picid = b.id WHERE a.?', [{ account }])
+        let imgList = await dealSql(sql).then((
+            { results }) => results)
+        ctx.body = imgList
+    })
 
 module.exports = router;
