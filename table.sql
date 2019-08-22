@@ -65,24 +65,21 @@ FROM
       
       
 SELECT 
-  c.* ,
-  IF(d.picid IS NULL,FALSE,TRUE) AS collected
+  c.*,
+  IF(d.picid IS NULL, FALSE, TRUE) AS collected 
 FROM
   `userImgType` a 
   LEFT JOIN `imgforuser` b 
     ON a.id = b.usertypeid 
   LEFT JOIN `imagelist` c 
     ON b.picid = c.id 
-    LEFT JOIN 
-	(
-		SELECT * FROM privateCollection
-		
-	) d
-    ON
-    c.id = d.`picid`
+  LEFT JOIN 
+    (SELECT 
+      * 
+    FROM
+      `privateCollection` 
+    WHERE account='1') d 
+    ON c.id = d.`picid` 
 WHERE (a.islock IS NULL 
     OR a.islock = FALSE) 
-  AND c.id IS NOT NULL
-  
-  
-  
+  AND c.id IS NOT NULL 
