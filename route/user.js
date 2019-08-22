@@ -43,6 +43,33 @@ router
 
         await next();
     })
+    // 获取获取所有可查看的图片
+    .get('/allImage', async ctx => {
+        let { account } = ctx.token;
+        // 这里拼接sql语句
+        let sql = mysql.format('SELECT c.*, IF(d.picid IS NULL,FALSE,TRUE) AS collected FROM `userImgType` a LEFT JOIN `imgforuser` b ON a.id = b.usertypeid LEFT JOIN `imagelist` c ON b.picid = c.id LEFT JOIN ( SELECT * FROM `privateCollection` WHERE ?) d ON c.`id` = d.`picid` WHERE (a.islock IS NULL OR a.islock = FALSE) AND c.id IS NOT NULL ', [{ account }])
+        let imgList = await dealSql(sql).then((
+            { results }) => results)
+        ctx.body = imgList
+    })
+
+    // 增加或者删除收藏
+    .put('/updatecollect', async ctx => {
+        let { account } = ctx.token;
+        let { isconllect, picid } = ctx.request.body;
+        let sql;
+        // 这里拼接sql语句
+        if (isconllect) {
+            // 代表已拥有收藏
+            sql = mysql.format('DELETE FROM `privateCollection` WHERE ? and ? ', [{ account }, { picid }])
+        } else {
+            sql = mysql.format('INSERT INTO `privateCollection` SET ?', [{ account, picid }])
+        }
+        let result = await dealSql(sql).then((
+            { results }) => results)
+        ctx.body = result
+    })
+
     // 获取相册（tree）
     .get('/imgType', async ctx => {
         // 这里拼接sql语句

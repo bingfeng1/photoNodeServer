@@ -52,11 +52,37 @@ DROP TABLE users;
 DROP TABLE userImgType;
 DROP TABLE imagelist;
 DROP TABLE imgforuser;
-DELETE  FROM `imagelist`
-SELECT * FROM `imagelist`
+DELETE FROM  `imagelist` ;
+  
+  
+SELECT   * FROM  `imagelist` ;
+  DELETE   FROM    `imgforuser` ;
+SELECT 
+  * 
+FROM
+  `imgforuser` ;
 
-DELETE  FROM `imgforuser`
-SELECT * FROM `imgforuser`
-
-
-SELECT a.*,IF(b.userImgTypeId IS NULL , FALSE , TRUE) AS islock FROM `userImgType` a LEFT JOIN privateUserImgType b ON a.account = b.account AND a.id = b.userImgTypeId WHERE a.account='1' ORDER BY orderId
+      
+      
+SELECT 
+  c.* ,
+  IF(d.picid IS NULL,FALSE,TRUE) AS collected
+FROM
+  `userImgType` a 
+  LEFT JOIN `imgforuser` b 
+    ON a.id = b.usertypeid 
+  LEFT JOIN `imagelist` c 
+    ON b.picid = c.id 
+    LEFT JOIN 
+	(
+		SELECT * FROM privateCollection
+		
+	) d
+    ON
+    c.id = d.`picid`
+WHERE (a.islock IS NULL 
+    OR a.islock = FALSE) 
+  AND c.id IS NOT NULL
+  
+  
+  
