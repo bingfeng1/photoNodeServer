@@ -193,12 +193,22 @@ router
     .delete('/deleteImg', async ctx => {
         let { account } = ctx.token;
         let { id, filename } = ctx.query;
-        let sql = mysql.format('DELETE FROM `imagelist` WHERE ? AND ? ', [{ account }, { id }])
+
+
+        // 个人收藏
+        let sql = mysql.format('DELETE FROM `privateCollection` WHERE ?  ', [{ picid: id }])
         let result = await dealSql(sql).then(
             ({ results }) => results
         )
 
+        // 图片分组信息
         sql = mysql.format('DELETE FROM `imgforuser` WHERE ? AND ? ', [{ account }, { picid: id }])
+        result = await dealSql(sql).then(
+            ({ results }) => results
+        )
+
+        // 删除图片列表
+        sql = mysql.format('DELETE FROM `imagelist` WHERE ? AND ? ', [{ account }, { id }])
         result = await dealSql(sql).then(
             ({ results }) => results
         )
@@ -229,7 +239,7 @@ router
     .get('/collect', async ctx => {
         let { account } = ctx.token;
         // 这里拼接sql语句
-        let sql = mysql.format('SELECT b.* FROM `privateCollection` a  LEFT JOIN `imagelist` b ON a.picid = b.id WHERE a.?', [{ account }])
+        let sql = mysql.format('SELECT b.*,TRUE as collected  FROM `privateCollection` a  LEFT JOIN `imagelist` b ON a.picid = b.id WHERE a.?', [{ account }])
         let imgList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = imgList
