@@ -26,17 +26,16 @@ let storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // 头像存放
-const multer2 = require('koa-multer')
-let storage2 = multer2.diskStorage({
+let storage2 = multer.diskStorage({
     destination:
         path.resolve(__dirname, '..', 'portrait')
     ,
     filename: function (req, file, cb) {
         // 通过uuid生成几乎唯一的名字（应该可以增加年月日）
-        cb(null, [nanoid(), file.originalname].join('.'))
+        cb(null, file.originalname)
     }
 })
-const upload2 = multer({ storage2 });
+const upload2 = multer({ storage:storage2 });
 
 // 解析token的方法
 const { checkToken } = require('../token/token')

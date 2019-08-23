@@ -55,6 +55,10 @@ DROP TABLE users;
 DROP TABLE userImgType;
 DROP TABLE imagelist;
 DROP TABLE imgforuser;
+DROP TABLE privateCollection;
+
+
+
 DELETE FROM  `imagelist` ;
   
   
