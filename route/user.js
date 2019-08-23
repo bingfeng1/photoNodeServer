@@ -24,6 +24,20 @@ let storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage });
+
+// 头像存放
+const multer2 = require('koa-multer')
+let storage2 = multer2.diskStorage({
+    destination:
+        path.resolve(__dirname, '..', 'portrait')
+    ,
+    filename: function (req, file, cb) {
+        // 通过uuid生成几乎唯一的名字（应该可以增加年月日）
+        cb(null, [nanoid(), file.originalname].join('.'))
+    }
+})
+const upload2 = multer({ storage2 });
+
 // 解析token的方法
 const { checkToken } = require('../token/token')
 
@@ -243,6 +257,34 @@ router
         let imgList = await dealSql(sql).then((
             { results }) => results)
         ctx.body = imgList
+    })
+    // 获取用户信息
+    .get('/userInfo', async ctx => {
+        let { account } = ctx.token;
+        let sql = mysql.format('SELECT * FROM `users` WHERE ?', [{ account }]);
+        let result = await dealSql(sql).then((
+            { results }) => results[0])
+        ctx.body = result
+    })
+    // 修改自己的用户信息
+    .post('/changeUserInfo', upload2.single('portrait'), async ctx => {
+        let { account } = ctx.token;
+        let { nickname, pass, birthday, hobbies, sex, imageType } = ctx.req.body;
+        let portrait = ctx.req.file.filename;
+        hobbies = hobbies == "undefined" ? null : hobbies.toString()
+        let sql = mysql.format('UPDATE `users` SET ? WHERE ?', [{ nickname, pass, birthday, hobbies, sex, portrait, imageType }, { account }])
+        let result = await dealSql(sql)
+            .then(
+                ({ results }) => {
+                    return { results }
+                }
+            )
+            .catch(
+                err => {
+                    return { message: err.message }
+                }
+            )
+        ctx.body = result;
     })
 
 

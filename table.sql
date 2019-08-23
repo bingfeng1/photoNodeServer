@@ -10,6 +10,9 @@ CREATE TABLE `users` (
   PRIMARY KEY (`account`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='用户信息表';
 
+ALTER TABLE `test`.`users`   
+  CHANGE `imageBase64` `portrait` VARCHAR(200) NULL  COMMENT '头像地址';
+
 CREATE TABLE `userImgType` (
   `id` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '列表的单独主键',
   `account` VARCHAR(50) COLLATE utf8_estonian_ci NOT NULL COMMENT '用户账户',
@@ -83,4 +86,4 @@ WHERE (a.islock IS NULL
     OR a.islock = FALSE) 
   AND c.id IS NOT NULL ;
   -- 所有收藏
-  SELECT b.* FROM `privateCollection` a  LEFT JOIN `imagelist` b on a.picid = b.id
+  SELECT b.* FROM `privateCollection` a  LEFT JOIN `imagelist` b ON a.picid = b.id

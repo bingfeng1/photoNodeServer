@@ -19,6 +19,7 @@ app.use(logger())
     .use(bodyParser({multipart: true}))
     .use(cors())
     .use(serve(__dirname + '/uploads'))
+    .use(serve(__dirname + '/portrait'))
     .use(async (ctx,next)=>{
         ctx.basePath = basePath;
         await next();

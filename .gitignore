@@ -86,5 +86,6 @@ typings/
 # 本项目需要忽略的内容
 .vscode
 uploads/*
+portrait/*
 
 config.json
